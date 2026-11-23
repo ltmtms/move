@@ -202,6 +202,56 @@ body:not(.in-game) .camera-tint {
   text-shadow: 0 0 10px var(--pink);
 }
 
+.song-pick {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.song-kicker {
+  margin: 0;
+  font-family: Orbitron, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--dim);
+}
+
+.songs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.song-btn {
+  flex: 1;
+  max-width: 220px;
+  min-height: 44px;
+  cursor: pointer;
+  font-family: Rajdhani, sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 4vw, 20px);
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--dim);
+  transform: skewX(-12deg);
+  transition: 0.15s;
+}
+
+.song-btn.active {
+  color: #05010f;
+  background: var(--cyan);
+  box-shadow: 0 0 18px var(--cyan);
+}
+
+.song-btn.active[data-song='1-10'] {
+  background: var(--pink);
+  box-shadow: 0 0 18px var(--pink);
+}
+
 .drop {
   width: 100%;
   display: flex;
@@ -243,6 +293,12 @@ body:not(.in-game) .camera-tint {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.drop-text.is-track {
+  font-family: Rajdhani, sans-serif;
+  font-size: clamp(18px, 4.2vw, 22px);
+  letter-spacing: 0.04em;
 }
 
 .drop-sub {
@@ -946,7 +1002,7 @@ body:not(.in-game) .camera-tint {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 20px;
-    row-gap: 8px;
+    row-gap: 6px;
     align-items: center;
   }
   .logo {
@@ -954,7 +1010,31 @@ body:not(.in-game) .camera-tint {
     font-size: clamp(26px, 6vw, 44px);
   }
   .tagline {
-    grid-column: 1 / -1;
+    grid-column: 1;
+    justify-self: start;
+    align-self: center;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .song-pick {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+  }
+  .song-kicker {
+    display: none;
+  }
+  .song-btn {
+    min-height: 36px;
+    font-size: 16px;
+  }
+  .drop {
+    padding: 8px 12px;
+  }
+  .drop-icon {
+    font-size: 16px;
   }
   .how {
     grid-column: 1 / -1;

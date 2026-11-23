@@ -15,6 +15,14 @@ export async function decodeFile(file: File): Promise<AudioBuffer> {
   return audioContext().decodeAudioData(data)
 }
 
+/** Decode a track served from the site (public/), same path as an uploaded file. */
+export async function decodeUrl(url: string): Promise<AudioBuffer> {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`無法載入歌曲 (${res.status})`)
+  const data = await res.arrayBuffer()
+  return audioContext().decodeAudioData(data)
+}
+
 /** Mono, 22.05 kHz copy of the track for analysis. */
 async function downmix(buffer: AudioBuffer): Promise<Float32Array> {
   const len = Math.ceil(buffer.duration * ANALYSIS_RATE)
