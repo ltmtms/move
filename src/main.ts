@@ -1,5 +1,5 @@
 import './style.css'
-import { analyze, audioContext, decodeFile, hashString, renderDemoTrack, SongPlayer, Sfx } from './audio/audio.ts'
+import { analyze, audioContext, decodeFile, decodeUrl, hashString, renderDemoTrack, SongPlayer, Sfx } from './audio/audio.ts'
 import type { HitKits as HitKitsT } from './audio/kits.ts'
 import { Engine, gradeFor, SLAP_SPEED } from './game/engine.ts'
 import { Renderer } from './game/renderer.ts'
@@ -64,7 +64,23 @@ function writeBest(name: string, d: Difficulty, score: number, grade: string): v
 
 // ───────────────────────── state ─────────────────────────
 let difficulty: Difficulty = 'normal'
-let track: { name: string; file?: File; buffer?: AudioBuffer } | null = null
+
+/** Tracks shipped in public/songs so GitHub Pages can serve them. 1-Minute is the default. */
+const SONGS = [
+  { id: '1-minute', name: '1-Minute', file: 'songs/1-Minute.mp3' },
+  { id: '1-10', name: '1:10', file: 'songs/untitled-70s.mp3' },
+] as const
+type SongId = (typeof SONGS)[number]['id']
+
+function songUrl(file: string): string {
+  return `${import.meta.env.BASE_URL}${file}`
+}
+
+type Track = { name: string; file?: File; url?: string; buffer?: AudioBuffer }
+const decoded = new Map<string, AudioBuffer>()
+
+let builtinId: SongId | null = '1-minute'
+let track: Track | null = { name: '1-Minute', url: songUrl('songs/1-Minute.mp3') }
 let chart: Chart | null = null
 let chartKey = ''
 let tracker: PoseTracker | null = null
@@ -102,11 +118,38 @@ function refreshMenu(): void {
     b.setAttribute('aria-checked', String(on))
   })
   ;($('start') as HTMLButtonElement).disabled = !track
-  $('drop-text').textContent = track ? `♪ ${track.name}` : '上載 MP3 / UPLOAD TRACK'
+  const dropText = $('drop-text')
+  dropText.textContent = track ? `♪ ${track.name}` : '上載 MP3 / UPLOAD TRACK'
+  // Rajdhani, so a duration label like "1:10" is not drawn with Orbitron's slashed zero
+  dropText.classList.toggle('is-track', !!track)
   $('drop').classList.toggle('loaded', !!track)
+  document.querySelectorAll<HTMLButtonElement>('.song-btn').forEach((b) => {
+    const on = b.dataset.song === builtinId
+    b.classList.toggle('active', on)
+    b.setAttribute('aria-checked', String(on))
+  })
   const best = track ? readBest(track.name, difficulty) : null
   $('best').textContent = best ? `BEST ${best.grade} · ${best.score.toLocaleString()}` : ''
 }
+
+function selectBuiltin(id: string): void {
+  const song = SONGS.find((s) => s.id === id)
+  if (!song) return
+  const url = songUrl(song.file)
+  if (builtinId === song.id && track?.url === url && !track.file) return
+  builtinId = song.id
+  track = { name: song.name, url }
+  chart = null
+  $<HTMLInputElement>('file').value = ''
+  refreshMenu()
+}
+
+document.querySelectorAll<HTMLButtonElement>('.song-btn').forEach((b) =>
+  b.addEventListener('click', () => {
+    const id = b.dataset.song
+    if (id) selectBuiltin(id)
+  }),
+)
 
 document.querySelectorAll<HTMLButtonElement>('.diff-btn').forEach((b) =>
   b.addEventListener('click', () => {
@@ -126,6 +169,7 @@ function pickFile(file: File | undefined): void {
     toast('請選擇 MP3 音樂檔案')
     return
   }
+  builtinId = null
   track = { name: file.name.replace(/\.[^.]+$/, ''), file }
   chart = null
   refreshMenu()
@@ -145,12 +189,25 @@ drop.addEventListener('drop', (e) => {
 })
 
 $('demo').addEventListener('click', () => {
+  builtinId = null
   track = { name: 'DEMO TECHNO 128' }
   chart = null
   refreshMenu()
   void begin()
 })
 $('start').addEventListener('click', () => void begin())
+
+async function loadTrackBuffer(t: Track): Promise<AudioBuffer> {
+  if (t.file) return decodeFile(t.file)
+  if (t.url) {
+    const cached = decoded.get(t.url)
+    if (cached) return cached
+    const buffer = await decodeUrl(t.url)
+    decoded.set(t.url, buffer)
+    return buffer
+  }
+  return renderDemoTrack()
+}
 
 // ───────────────────────── loading flow ─────────────────────────
 async function begin(): Promise<void> {
@@ -173,7 +230,7 @@ async function begin(): Promise<void> {
 
     if (!track.buffer) {
       setLoading('DECODING TRACK', 0.15)
-      track.buffer = track.file ? await decodeFile(track.file) : await renderDemoTrack()
+      track.buffer = await loadTrackBuffer(track)
     }
 
     const key = `${track.name}|${difficulty}`

@@ -1,6 +1,6 @@
 # MOVE YOUR BODY
 
-Techno 體感節奏遊戲。上載 MP3，遊戲會分析節拍並生成譜面；螢光飛碟沿著路軌飛向你，用鏡頭追蹤你的手掌，把手掌泊在飛碟上（或快速拍穿它）得分。
+Techno 體感節奏遊戲。選擇內置曲目（預設 **1-Minute**，或 **1:10**）或上載 MP3，遊戲會分析節拍並生成譜面；螢光飛碟沿著路軌飛向你，用鏡頭追蹤你的手掌，把手掌泊在飛碟上（或快速拍穿它）得分。
 
 **Play:** https://ltmtms.github.io/move/
 
@@ -8,7 +8,7 @@ Works on phone, iPad and desktop (Chrome / Safari / Edge, HTTPS required for the
 
 ## How to play
 
-1. Upload an MP3 (or tap **DEMO TECHNO** to try a built-in 128 BPM track) and pick EASY / NORMAL / HARD.
+1. Pick a track — **1-Minute** (selected by default) or **1:10** — or upload an MP3, or tap **DEMO TECHNO** for a generated 128 BPM loop. Then pick EASY / NORMAL / HARD.
 2. Allow camera access. Step back so your head, shoulders and both hands are visible.
 3. Raise both hands above your shoulders for 1 second to start.
 4. Saucers fly in from the horizon. When one reaches its dashed target ring (the solid approach ring closes onto it on the beat):

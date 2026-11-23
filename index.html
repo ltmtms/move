@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#05010f" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="description" content="Techno motion rhythm game: upload an MP3 and hit neon flying saucers with your palms using your camera." />
+    <meta name="description" content="Techno motion rhythm game: pick 1-Minute or 1:10, or upload an MP3, and hit neon flying saucers with your palms using your camera." />
     <title>MOVE YOUR BODY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,6 +24,14 @@
         <div class="menu-inner">
           <div class="logo" data-text="MOVE YOUR BODY">MOVE YOUR BODY</div>
           <p class="tagline">// 體感節奏 · NEON SAUCER BEAT ATTACK</p>
+
+          <div class="song-pick">
+            <p class="song-kicker">選曲 · TRACK</p>
+            <div class="songs" role="radiogroup" aria-label="Track">
+              <button type="button" class="song-btn active" data-song="1-minute" role="radio" aria-checked="true">1-Minute</button>
+              <button type="button" class="song-btn" data-song="1-10" role="radio" aria-checked="false">1:10</button>
+            </div>
+          </div>
 
           <label id="drop" class="drop">
             <input id="file" type="file" accept="audio/mpeg,audio/mp3,audio/*,.mp3" hidden />
